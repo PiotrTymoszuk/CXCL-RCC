@@ -1,0 +1,239 @@
+---
+title: "Expression of CXCL9 orchestrates cytotoxic and regulatory T cell infiltration in renal cell carcinoma"
+subtitle: "Methods, Figures and Tables"
+author: "Uro study team"
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+
+output: 
+  bookdown::word_document2:   
+    reference_docx: ms_template.docx
+    
+bibliography: cxcl_biblio.bib
+csl: frontiers-in-immunology.csl
+header-includes:
+  \usepackage{longtable}
+  \usepackage{tabu}
+  \usepackage{caption}
+  \usepackage{makecell}
+  \usepackage{pdflscape}
+  \usepackage{array}
+  \usepackage{booktabs}
+  \usepackage{threeparttable}
+  \usepackage{threeparttablex}
+  \usepackage{wrapfig}
+  \usepackage{multirow}
+  \usepackage[normalem]{ulem}
+  \usepackage{colortbl}
+  \usepackage{xcolor}
+  \usepackage{float} \floatplacement{figure}{H} \floatplacement{table}{H}
+  \newcommand{\beginsupplement}{\setcounter{table}{0}  \renewcommand{\thetable}{S\arabic{table}}       \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
+---
+
+```{r, setup, include = FALSE}
+
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, 
+                      dev = "png", dpi = 600, 
+                      tab.cap.pre = 'Supplementary Table ', tab.cap.sep = " ", 
+                      tab.cap.style = 'Table Heading')
+
+set_flextable_defaults(font.family = 'Cambria', 
+                       font.size = 10)
+
+
+```
+
+\newpage
+
+# Methods
+
+Detailed description of analysis procedures is provided in __Supplementary Methods__.
+
+## Ethics
+
+No ethics committee approval was needed for publicly available anonymous expression and clinical information data sets. 
+Donors of tissue for flow cytometry measurements provided written consent. 
+The study was conducted in accordance with the Declaration of Helsinki and its protocol was approved by the ethical committee of the University Hospital Regensburg (approval number: ...to be filled in...)
+
+## Software
+
+The analysis was done with R version 4.2.0. 
+Basic data transformation tasks were accomplished with the _tidyverse_ package bundle [@Wickham2019]. 
+Results were visualized with the packages _ggplot2_ (bubble plots) [@Wickham2016], _ExDA_ (violin plots; https://github.com/PiotrTymoszuk/ExDA), _microViz_ (Forest plots, bar plots of regulation estimates and p values; https://github.com/PiotrTymoszuk/microViz) and _survminer_ (Kaplan-Meier plots) [@Kassambara2016]. 
+Exploratory data analysis and hypothesis testing was done with the _rstatix_ [@Kassambara2021] and _ExDA_ packages.
+
+## Data import and transformation
+
+The following publicly available RCC data sets were re-analyzed: 
+TCGA Clear Cell Carcinoma (KIRC) project [@Creighton2013], 
+whole-genome subsets of the CheckMate 010 (CM 010) and CheckMate 025 (CM 025) studies [@Braun2020], 
+GSE73731 [@Wei2017], 
+GSE167093 [@Laskar2021], 
+RECA-EU [@RECA] 
+and E-MTAB 1980 [@Sato2013]. 
+Author-provided expression data and clinical information for the TCGA cohort were extracted from the GDC Data Portal with the TCGA-Assembler script (https://github.com/compgenome365/TCGA-Assembler-2/blob/master/TCGA-Assembler/). 
+Author-provided expression and clinical data for GSE73731 and GSE167093 were fetched with the _GEOquery_ package [@Sean2007]. 
+E-MTAB 1980 and RECA-EU data sets were imported from the ArrayExpress and ICGC Data Portal repositories, respectively, with in-house developed R scripts.
+To investigate possible effects of therapy with immune checkpoint inhibitors, the CheckMate 025 everolimus (CM 025 EVER) and nivolumab (CM 025 NIVO) treatment arms were analyzed separately.
+
+For the microarray expression studies (GSE73731, GSE167093, E-MTAB 1980), integration of multiple probes targeting the same gene was accomplished by geometric mean. 
+Expression values were transformed with $log_2(transcript count + 1)$ (RNA sequencing: TCGA, CM 010, CM 025, RECA-EU) of $log_2$.
+Immune infiltration estimates were calculated using the QuanTIseq algorithm (_immunedeconv_ package) [@Finotello2019; @Sturm2020].
+
+The following genes were investigated: _CXCL9_ (Entrez ID: `r translate_gene('CXCL9')`), _CXCL10_ (`r translate_gene('CXCL10')`),  _CXCL11_ (`r translate_gene('CXCL11')`) and _CXCR3_ (`r translate_gene('CXCR3')`).
+
+## Descriptive statistic and hypothesis testing
+
+Numeric variables are presented as median values with interquartile ranges. 
+Categorical variables are presented as percentages and total numbers within the complete observation set. 
+Comparison of log~2~-transformed expression between donor-matched normal kidney and RCC samples was done with two-tailed paired T test. 
+Differences in log~2~-transformed expression levels between tumor grades, tumor stages, individuals with our without distant metastases at diagnosis,  MSKCC (Memorial Sloan Kettering Cancer Center) risk groups and patients with or without overall clinical response to therapy were investigated by Mann-Whitney test with r effect size statistic or Kruskal-Wallis test with $\eta^2$ effect size statistic, as appropriate. 
+Pair-wise correlation of log~2~-transformed expression in RCC and correlations of log~2~-transformed _CXCL9_ and _CXCR3_ expression with infiltration estimates were analyzed with Spearman's test. 
+Statistical significance in differences in overall and relapse-free survival between _CXCL9_^high^ and _CXCL9_^low^ expressors was determined by Mentel-Henszel test. 
+P values were corrected for multiple testing for each analysis step separately with the Benjamini-Hochberg method [@Benjamini1995].
+
+## Survival stratification and differential gene expression
+
+Cancer samples in the cohorts with survival data available (TCGA, CM 010, CM 025, RECA-EU, E-MTAB 1980) were stratified into low and high expressors of _CXCL9_ with the cutoff corresponding to the largest difference in overall or relapse-free survival determined by Mentel-Henszel test (packages _survival_ and _kmOptimizer_, https://github.com/PiotrTymoszuk/kmOptimizer) [@Therneau2000; @Kocher2021; @Eigentler2020]. 
+Samples in the cohorts without survival data (GSE73731, GSE167093) were dichotomized by the median _CXCL9_ expression.
+
+Differential gene expression in the _CXCL9_ expression strata defined by overall survival or median split was investigated by Benjamini-Hochberg-corrected two-tailed T test (package _microViz_) [@Benjamini1995]. 
+The differentially regulated genes were defined by the adjusted significance cutoff (pFDR < 0.05) and the 1.5-fold regulation cutoff.
+
+## GO enrichment analysis, signaling pathway modulation, gene set variation analysis
+
+Biological process (BP) gene ontology (GO) term enrichment for the differentially regulated genes was analyzed with the _goana()_ tool (package _limma_) [@Young2010].
+Differential modulation of KEGG-listed pathways based on the differential gene expression was investigated with SPIA with the combined significance for gene set enrichment and net pathway regulation (pG) as a significance metric and tA as an estimate of magnitude of pathway modulation [@Tarca2009]. 
+Regulation of particular signaling pathway components was visualized with the _pathview_ package [@Luo2013]. 
+
+Signatures of CD8^+^ T cells, cytotoxicity, exhaustion and regulatory T cells were retrieved from the MSig Database, release 7.5.1. 
+Gene set variation analysis (GSVA) scores for the gene signature were calculated with the _GSVA_ [@Hanzelmann2013]and _gseaTools_ packages (https://github.com/PiotrTymoszuk/gseaTools). 
+GSVA scores were compared between the _CXCL9_ expression strata by two-tailed T test with Benjamini-Hochberg correction for multiple testing (package _microViz_) [@Benjamini1995].
+
+## Biochemical reaction modulation
+
+Rules of assignment of genes to biochemical reactions were retrieved from the Recon2 human metabolism model available via the BiGG database [@King2016]. 
+
+Regulation of biochemical reactions in the _CXCL9_ expression strata based on whole-genome estimates of differential gene expression and their standard errors was done by evaluation of the gene assignment rules with the 'gene - protein - reaction' (GPR) principle [@Gavai2015].
+Standard deviation, 95% confidence intervals and p values for the predicted reaction regulation estimates were obtained by a Monte Carlo simulation (n = 1000 draws). 
+The analysis was done with the package _BiGGR_ [@Gavai2015] and the development package _biggrExtra_ (https://github.com/PiotrTymoszuk/biggrExtra). 
+
+## Flow cytometry
+
+Donor-matched peripheral blood mononuclear cells (PBMC), healthy kidney tissues, tissues from the center and periphery of RCC were obtained freshly at the day of surgery (n = 4, __Supplementary Table S1__). 
+The donors were recruited at the Department of Urology of the University Hospital Regensburg between 2019 and 2020 prior to the pharmacological cancer treatment. 
+Single cell suspensions of kidney and RCC samples were obtained as described previously [@Siska2017]. 
+PBMC were purified by Ficoll density gradient centrifugation. 
+The cell suspensions were permeabilized using the Cytofix/Cytoperm kit (BD) and stained with anti-CD3, CD14, CD56, CD19, CD25, CD4 (all BD), CD8 (BioLegend) and CXCL9 antibodies (Biotechne). 
+Viable cells were identified by staining with Fixable Viability Dye eFluor 708 (eBioscience).
+
+## Data and code availability
+
+Data analyzed within the study are publicly available. 
+The study pipeline is available at ... to be filled in ....
+
+\newpage
+
+# Tables
+
+```{r tab-cohort, tab.cap = 'Characteristic of the study cohorts. Numeric variables are presented as medians with interquartile ranges and ranges. Categorical variables are presented as percentage and total number within the complete observation set.'}
+
+flextable::flextable(tbls$cohort) %>% 
+  flextable::width(1, width = 3, unit = 'cm') %>% 
+  flextable::width(2:9, width = 2.2, unit = 'cm') %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
+# Figures
+
+```{r fig-norm-tumor, fig.width = mm_inch(figs$norm_tumor$w), fig.height = mm_inch(figs$norm_tumor$h), fig.cap = 'Expression of CXCL9 in the normal kidney and RCC.'}
+
+figs$norm_tumor$plot
+
+```
+
+__Figure \@ref(fig:fig-norm-tumor). Expression of CXCL9 in the normal kidney and RCC.__ 
+_Differences in log~2~-transformed expression of CXCL9 between the matched normal kidney and RCC samples in the TCGA and GSE73731 cohorts were investigated by two-tailed paired T test with Cohen's d effect size statistic. P values were corrected for multiple testing with Benjamini-Hochberg method. Points represent single samples, samples from the same tissue donors are connected with lines. Effect size statistic and p values are displayed in the plot captions. Numbers of tissue donors are indicated under the plots._
+
+\newpage
+
+```{r fig-infil, fig.width = mm_inch(figs$infil$w), fig.height = mm_inch(figs$infil$h), fig.cap = 'Correlation of CXCL9 expression in RCC with immune cell infiltration.'}
+
+figs$infil$plot
+
+```
+
+__Figure \@ref(fig:fig-infil). Correlation of CXCL9 expression in RCC with immune cell infiltration.__ 
+_Levels of immune cells in cancer samples were predicted with the QuanTIseq algorithm. Correlation of the immune infiltration estimates and log~2~-transformed levels of CXCL9 expression was investigated by Spearman's test corrected for multiple testing with Benjamini-Hochberg method. Correlation coefficients $\rho$ are presented in a bubble plot. Point size corresponds to the absolute $\rho$ value, point color corresponds to the $\rho$ value. Points are labeled with the $\rho$ values, significant correlations are highlighted in bold. Numbers of complete observations are indicated in the X axis. CM: CheckMate, EVER: everolimus, NIVO: nivolumab, Treg: regulatory T cells, NK: natural killer cells, TAM: tumor-associated macrophages, Mono: monocytes, Neutro: neutrophils, mDC: myeloid dendritic cells._
+
+\newpage
+
+```{r fig-fc, fig.width = mm_inch(figs$infil$w), fig.height = mm_inch(figs$infil$h), fig.cap = 'CXCL9 is predominantly expressed in CD14+ myeloid cells infiltrating ccRCC tumors and correlates with intratumoral immune cell frequencies (placeholder).'}
+
+ggdraw()
+
+```
+
+__Figure \@ref(fig:fig-fc). CXCL9 is predominantly expressed in CD14+ myeloid cells infiltrating ccRCC tumors and correlates with intratumoral immune cell frequencies (placeholder).__ 
+_Legend_
+
+\newpage
+
+```{r fig-go, fig.width = mm_inch(figs$go$w), fig.height = mm_inch(figs$go$h), fig.cap = 'Biological process GO term enrichment within the genes differentially regulated between CXCL9 high and CXCL9 low tumors.'}
+
+figs$go$plot
+
+```
+
+__Figure \@ref(fig:fig-go). Biological process GO term enrichment within the genes differentially regulated between CXCL9^high^ and CXCL9^low^ tumors.__ 
+_Cancers samples were classified as CXCL9^high^ and CXCL9^low^ with the cutoffs corresponding to the largest difference in overall survival (TCGA, CM 010, CM 025, E-MTAB 1980 and EU RECA) or by the median CXCL9 expression (GSE73731, GSE167093). Genes differentially regulated between the CXCL9 expression strata were identified by Benjamini-Hochberg-corrected two-tailed T test and the 1.5-fold regulation cutoff. Biological process gene ontology (GO) term enrichment within the differentially regulated gene sets was determined by the goana tool. No significantly enriched GO terms were identified in the CheckMate 010 cohort. p values for significant GO terms shared by all cohorts except for the CheckMate 010 collective are presented in bar plots. CM: CheckMate, EVER: everolimus, NIVO: nivolumab._
+
+\newpage
+
+```{r fig-spia, fig.width = mm_inch(figs$spia$w), fig.height = mm_inch(figs$spia$h), fig.cap = 'Predicted modulation of signaling pathways in CXCL9 high tumors.'}
+
+figs$spia$plot
+
+```
+
+__Figure \@ref(fig:fig-spia). Predicted modulation of signaling pathways in CXCL9^high^ tumors.__ 
+_Modulation of KEGG-listed signaling pathways in CXCL9^high^ versus CXCL9^low^ cancers based on fold-regulation expression estimates for differentially regulated genes was predicted with the SPIA tool. Values of the pathway modulation metric tA for signaling pathways found significantly regulated in all study cohorts are presented in a bubble plot. Point size corresponds to the tA value, point color codes for the regulation status as compared with CXCL9^low^ cancers. Points are labeled with the tA values._
+
+\newpage
+
+```{r fig-faox, fig.width = mm_inch(figs$faox$w), fig.height = mm_inch(figs$faox$h), fig.cap = 'Predicted regulation of fatty acid oxidation reactions in CXCL9 high tumors.'}
+
+figs$faox$plot
+
+```
+
+__Figure \@ref(fig:fig-faox). Predicted regulation of fatty acid oxidation reactions in CXCL9^high^ tumors.__ 
+_Regulation of metabolic reactions in CXCL9^high^ versus CXCL9^low^ cancer based on estimates of differential gene expression was predicted with the BiGGR and biggrExtra tools. Fold-regulation estimates for fatty acid oxidation (FAOx) are presented in as bar plots. Each bar represents a single reaction, bar color codes for significance and activation status. Total numbers of reactions are indicated in the X axis. Numbers of significantly activated and inhibited reactions are displayed in the plot captions. CM: CheckMate, EVER: everolimus, NIVO: nivolumab._
+
+\newpage
+
+```{r fig-oxphos, fig.width = mm_inch(figs$oxphos$w), fig.height = mm_inch(figs$oxphos$h), fig.cap = 'Predicted regulation of oxidative phosphorylation reactions in CXCL9 high tumors.'}
+
+figs$oxphos$plot
+
+```
+
+__Figure \@ref(fig:fig-oxphos). Predicted regulation of oxidative phosphorylation reactions in CXCL9^high^ tumors.__ 
+_Regulation of metabolic reactions in CXCL9^high^ versus CXCL9^low^ cancer based on estimates of differential gene expression was predicted with the BiGGR and biggrExtra tools. Fold-regulation estimates for oxidative phosphorylation (OxPhos) with 95% confidence intervals are presented in as Forest plots. Point color codes for significance and activation status._
+
+\newpage
+
+```{r fig-os, fig.width = mm_inch(figs$os$w), fig.height = mm_inch(figs$os$h), fig.cap = 'Overall survival of patients bearing CXCL9 high and CXCL9 low RCC.'}
+
+figs$os$plot
+
+```
+
+__Figure \@ref(fig:fig-os). Overall survival of patients bearing CXCL9^high^ and CXCL9^low^ RCC.__ 
+_Cancer samples were classified as CXCL9^low^ and CXCL9^high^ with the cutoffs corresponding to the largest differences in overall survival (OS). Differences in OS between the CXCL9 expression strata were investigated with Mentel-Henszel test corrected for multiple testing with Benjamini-Hochberg method. Fractions of surviving patients are presented in Kaplan-Meier plots. Numbers of low and high expressors, cutoff and p values are displayed in the plot captions._
+
+\newpage
+
+# References
