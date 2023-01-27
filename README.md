@@ -28,6 +28,7 @@ To make sure to install required development packages prior to runung the pipeli
 devtools::install_github('PiotrTymoszuk/ExDA')
 devtools::install_github('PiotrTymoszuk/microViz')
 devtools::install_github('PiotrTymoszuk/kmOptimizer')
+devtools::install_github('PiotrTymoszuk/coxExtensions')
 devtools::install_github('PiotrTymoszuk/trafo')
 devtools::install_github('PiotrTymoszuk/gseaTools')
 devtools::install_github('PiotrTymoszuk/biggrExtra')
